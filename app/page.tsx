@@ -1,4 +1,15 @@
-import { ArrowRight, Palette, Sparkles, Zap } from "lucide-react";
+import {
+  ArrowRight,
+  Palette,
+  Sparkles,
+  Zap,
+  Check,
+  ChevronDown,
+  Plus,
+  Heart,
+  Paintbrush,
+  Wand2,
+} from "lucide-react";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
@@ -104,22 +115,47 @@ export default function Home() {
                     unique, harmonious color palettes for your projects.
                   </p>
                 </div>
-                <div className="mx-auto grid justify-center gap-4 sm:grid-cols-2 md:max-w-[64rem] md:grid-cols-3">
-                  <FeatureCard
-                    icon={<Palette className="h-10 w-10" />}
-                    title="AI Color Palette Generator"
-                    description="Generate harmonious color schemes based on machine learning algorithms and color theory."
-                  />
-                  <FeatureCard
-                    icon={<Sparkles className="h-10 w-10" />}
-                    title="Brand Identity Extraction"
-                    description="Upload your logo and let our AI extract and suggest complementary color palettes."
-                  />
-                  <FeatureCard
-                    icon={<Zap className="h-10 w-10" />}
-                    title="Accessibility Optimization"
-                    description="Ensure your color choices meet WCAG standards with our AI contrast analyzer."
-                  />
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="p-6 rounded-lg border bg-white">
+                    <div className="flex items-center gap-4 mb-4">
+                      <div className="p-2 rounded-full bg-accent/10">
+                        <Sparkles className="h-6 w-6 text-accent" />
+                      </div>
+                      <h3 className="text-lg font-semibold">
+                        AI-Powered Generation
+                      </h3>
+                    </div>
+                    <p className="text-muted-foreground">
+                      Create stunning color palettes instantly with our advanced
+                      AI technology
+                    </p>
+                  </div>
+                  <div className="p-6 rounded-lg border bg-white">
+                    <div className="flex items-center gap-4 mb-4">
+                      <div className="p-2 rounded-full bg-accent/10">
+                        <Paintbrush className="h-6 w-6 text-accent" />
+                      </div>
+                      <h3 className="text-lg font-semibold">
+                        Smart Color Analysis
+                      </h3>
+                    </div>
+                    <p className="text-muted-foreground">
+                      Get intelligent color suggestions based on your
+                      preferences and design needs
+                    </p>
+                  </div>
+                  <div className="p-6 rounded-lg border bg-white">
+                    <div className="flex items-center gap-4 mb-4">
+                      <div className="p-2 rounded-full bg-accent/10">
+                        <Wand2 className="h-6 w-6 text-accent" />
+                      </div>
+                      <h3 className="text-lg font-semibold">One-Click Magic</h3>
+                    </div>
+                    <p className="text-muted-foreground">
+                      Transform your designs with just one click using our magic
+                      wand feature
+                    </p>
+                  </div>
                 </div>
               </section>
 

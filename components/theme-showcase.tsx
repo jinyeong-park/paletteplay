@@ -62,6 +62,13 @@ export default function ThemeShowcase() {
       ...prevColors,
       [color]: value,
     }));
+    setSelectedTheme((prevTheme) => ({
+      ...prevTheme,
+      colors: {
+        ...prevTheme.colors,
+        [color]: value,
+      },
+    }));
   };
 
   const handleSaveCustomPalette = () => {
@@ -89,6 +96,27 @@ export default function ThemeShowcase() {
       return;
     }
 
+    // Check if we already have 3 palettes
+    if (savedPalettes.length >= 3) {
+      alert("You can only save up to 3 palettes.");
+      return;
+    }
+
+    // Check for duplicate color combinations
+    const isDuplicate = savedPalettes.some((palette) => {
+      return (
+        palette.colors.accent === selectedTheme.colors.accent &&
+        palette.colors.secondary === selectedTheme.colors.secondary &&
+        palette.colors.text === selectedTheme.colors.text &&
+        palette.colors.background === selectedTheme.colors.background
+      );
+    });
+
+    if (isDuplicate) {
+      alert("This color combination already exists in your saved palettes.");
+      return;
+    }
+
     const newPalette = {
       name: selectedTheme.name,
       colors: selectedTheme.colors,
@@ -101,6 +129,16 @@ export default function ThemeShowcase() {
     // Here you would typically make an API call to authenticate
     setIsAuthenticated(true);
     setShowAuthDialog(false);
+  };
+
+  const handleCustomPaletteSelect = () => {
+    setIsEditingCustomPalette(true);
+    setCustomPaletteName("Custom Palette");
+    setCustomPaletteColors(selectedTheme.colors);
+    setSelectedTheme({
+      name: "Custom Palette",
+      colors: selectedTheme.colors,
+    });
   };
 
   return (
@@ -137,11 +175,7 @@ export default function ThemeShowcase() {
             >
               <DropdownMenuGroup>
                 <DropdownMenuItem
-                  onClick={() => {
-                    setIsEditingCustomPalette(true);
-                    setCustomPaletteName("Custom Palette");
-                    setCustomPaletteColors(selectedTheme.colors);
-                  }}
+                  onClick={handleCustomPaletteSelect}
                   className="gap-2"
                 >
                   <Plus className="h-4 w-4" />
@@ -235,6 +269,19 @@ export default function ThemeShowcase() {
                 style={{ backgroundColor: "#FFFFFF" }}
               ></div>
               <span className="text-xs font-medium">Background</span>
+              {isEditingCustomPalette ? (
+                <div className="w-16 h-8 border rounded-md overflow-hidden bg-white">
+                  <Input
+                    type="color"
+                    value="#FFFFFF"
+                    onChange={(e) =>
+                      handleCustomColorChange("background", e.target.value)
+                    }
+                    className="w-full h-full p-0 border-0 cursor-pointer"
+                    style={{ height: "100%", width: "100%" }}
+                  />
+                </div>
+              ) : null}
               <span className="text-xs text-muted-foreground">#FFFFFF</span>
             </div>
             <div className="flex flex-col items-center gap-2">
@@ -244,19 +291,21 @@ export default function ThemeShowcase() {
               ></div>
               <span className="text-xs font-medium">Text</span>
               {isEditingCustomPalette ? (
-                <Input
-                  type="color"
-                  value={selectedTheme.colors.text}
-                  onChange={(e) =>
-                    handleCustomColorChange("text", e.target.value)
-                  }
-                  className="w-16 h-8 p-1"
-                />
-              ) : (
-                <span className="text-xs text-muted-foreground">
-                  {selectedTheme.colors.text}
-                </span>
-              )}
+                <div className="w-16 h-8 border rounded-md overflow-hidden bg-white">
+                  <Input
+                    type="color"
+                    value={selectedTheme.colors.text}
+                    onChange={(e) =>
+                      handleCustomColorChange("text", e.target.value)
+                    }
+                    className="w-full h-full p-0 border-0 cursor-pointer"
+                    style={{ height: "100%", width: "100%" }}
+                  />
+                </div>
+              ) : null}
+              <span className="text-xs text-muted-foreground">
+                {selectedTheme.colors.text}
+              </span>
             </div>
             <div className="flex flex-col items-center gap-2">
               <div
@@ -265,19 +314,21 @@ export default function ThemeShowcase() {
               ></div>
               <span className="text-xs font-medium">Accent</span>
               {isEditingCustomPalette ? (
-                <Input
-                  type="color"
-                  value={selectedTheme.colors.accent}
-                  onChange={(e) =>
-                    handleCustomColorChange("accent", e.target.value)
-                  }
-                  className="w-16 h-8 p-1"
-                />
-              ) : (
-                <span className="text-xs text-muted-foreground">
-                  {selectedTheme.colors.accent}
-                </span>
-              )}
+                <div className="w-16 h-8 border rounded-md overflow-hidden bg-white">
+                  <Input
+                    type="color"
+                    value={selectedTheme.colors.accent}
+                    onChange={(e) =>
+                      handleCustomColorChange("accent", e.target.value)
+                    }
+                    className="w-full h-full p-0 border-0 cursor-pointer"
+                    style={{ height: "100%", width: "100%" }}
+                  />
+                </div>
+              ) : null}
+              <span className="text-xs text-muted-foreground">
+                {selectedTheme.colors.accent}
+              </span>
             </div>
             <div className="flex flex-col items-center gap-2">
               <div
@@ -286,21 +337,31 @@ export default function ThemeShowcase() {
               ></div>
               <span className="text-xs font-medium">Secondary</span>
               {isEditingCustomPalette ? (
-                <Input
-                  type="color"
-                  value={selectedTheme.colors.secondary}
-                  onChange={(e) =>
-                    handleCustomColorChange("secondary", e.target.value)
-                  }
-                  className="w-16 h-8 p-1"
-                />
-              ) : (
-                <span className="text-xs text-muted-foreground">
-                  {selectedTheme.colors.secondary}
-                </span>
-              )}
+                <div className="w-16 h-8 border rounded-md overflow-hidden bg-white">
+                  <Input
+                    type="color"
+                    value={selectedTheme.colors.secondary}
+                    onChange={(e) =>
+                      handleCustomColorChange("secondary", e.target.value)
+                    }
+                    className="w-full h-full p-0 border-0 cursor-pointer"
+                    style={{ height: "100%", width: "100%" }}
+                  />
+                </div>
+              ) : null}
+              <span className="text-xs text-muted-foreground">
+                {selectedTheme.colors.secondary}
+              </span>
             </div>
           </div>
+          {isEditingCustomPalette && (
+            <div className="flex justify-end">
+              <Heart
+                className="h-6 w-6 text-red-500 cursor-pointer"
+                onClick={handleSavePalette}
+              />
+            </div>
+          )}
 
           {/* Mini Landing Page Preview */}
           <div className="mt-6 border rounded-lg overflow-hidden">
