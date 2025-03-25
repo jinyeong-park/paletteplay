@@ -39,6 +39,7 @@ export default function ThemeShowcase() {
     text: "#000000",
     background: "#FFFFFF",
   });
+  const [isEditingCustomPalette, setIsEditingCustomPalette] = useState(false);
   const [showAuthDialog, setShowAuthDialog] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
   const [authEmail, setAuthEmail] = useState("");
@@ -135,6 +136,18 @@ export default function ThemeShowcase() {
               className="w-[200px] max-h-[400px] overflow-y-auto bg-white dark:bg-white"
             >
               <DropdownMenuGroup>
+                <DropdownMenuItem
+                  onClick={() => {
+                    setIsEditingCustomPalette(true);
+                    setCustomPaletteName("Custom Palette");
+                    setCustomPaletteColors(selectedTheme.colors);
+                  }}
+                  className="gap-2"
+                >
+                  <Plus className="h-4 w-4" />
+                  <span>Custom Palette</span>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
                 {themes.map((theme) => (
                   <DropdownMenuItem
                     key={theme.name}
@@ -159,139 +172,6 @@ export default function ThemeShowcase() {
                     </div>
                   </DropdownMenuItem>
                 ))}
-                <DropdownMenuSeparator />
-                <div className="p-2 space-y-4">
-                  <div className="space-y-2">
-                    <Label
-                      htmlFor="name"
-                      className="text-black dark:text-black"
-                    >
-                      Palette Name
-                    </Label>
-                    <Input
-                      id="name"
-                      value={customPaletteName}
-                      onChange={(e) => setCustomPaletteName(e.target.value)}
-                      placeholder="Enter palette name"
-                      className="text-black dark:text-black"
-                    />
-                  </div>
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="space-y-2">
-                      <Label
-                        htmlFor="accent"
-                        className="text-black dark:text-black"
-                      >
-                        Accent
-                      </Label>
-                      <div className="flex gap-2">
-                        <Input
-                          id="accent"
-                          type="color"
-                          value={customPaletteColors.accent}
-                          onChange={(e) =>
-                            handleCustomColorChange("accent", e.target.value)
-                          }
-                          className="w-8 h-8 p-1"
-                        />
-                        <Input
-                          value={customPaletteColors.accent}
-                          onChange={(e) =>
-                            handleCustomColorChange("accent", e.target.value)
-                          }
-                          className="text-black dark:text-black"
-                        />
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <Label
-                        htmlFor="secondary"
-                        className="text-black dark:text-black"
-                      >
-                        Secondary
-                      </Label>
-                      <div className="flex gap-2">
-                        <Input
-                          id="secondary"
-                          type="color"
-                          value={customPaletteColors.secondary}
-                          onChange={(e) =>
-                            handleCustomColorChange("secondary", e.target.value)
-                          }
-                          className="w-8 h-8 p-1"
-                        />
-                        <Input
-                          value={customPaletteColors.secondary}
-                          onChange={(e) =>
-                            handleCustomColorChange("secondary", e.target.value)
-                          }
-                          className="text-black dark:text-black"
-                        />
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <Label
-                        htmlFor="text"
-                        className="text-black dark:text-black"
-                      >
-                        Text
-                      </Label>
-                      <div className="flex gap-2">
-                        <Input
-                          id="text"
-                          type="color"
-                          value={customPaletteColors.text}
-                          onChange={(e) =>
-                            handleCustomColorChange("text", e.target.value)
-                          }
-                          className="w-8 h-8 p-1"
-                        />
-                        <Input
-                          value={customPaletteColors.text}
-                          onChange={(e) =>
-                            handleCustomColorChange("text", e.target.value)
-                          }
-                          className="text-black dark:text-black"
-                        />
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <Label
-                        htmlFor="background"
-                        className="text-black dark:text-black"
-                      >
-                        Background
-                      </Label>
-                      <div className="flex gap-2">
-                        <Input
-                          id="background"
-                          type="color"
-                          value={customPaletteColors.background}
-                          onChange={(e) =>
-                            handleCustomColorChange(
-                              "background",
-                              e.target.value
-                            )
-                          }
-                          className="w-8 h-8 p-1"
-                        />
-                        <Input
-                          value={customPaletteColors.background}
-                          onChange={(e) =>
-                            handleCustomColorChange(
-                              "background",
-                              e.target.value
-                            )
-                          }
-                          className="text-black dark:text-black"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  <Button onClick={handleSaveCustomPalette} className="w-full">
-                    Create Palette
-                  </Button>
-                </div>
               </DropdownMenuGroup>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -363,9 +243,20 @@ export default function ThemeShowcase() {
                 style={{ backgroundColor: selectedTheme.colors.text }}
               ></div>
               <span className="text-xs font-medium">Text</span>
-              <span className="text-xs text-muted-foreground">
-                {selectedTheme.colors.text}
-              </span>
+              {isEditingCustomPalette ? (
+                <Input
+                  type="color"
+                  value={selectedTheme.colors.text}
+                  onChange={(e) =>
+                    handleCustomColorChange("text", e.target.value)
+                  }
+                  className="w-16 h-8 p-1"
+                />
+              ) : (
+                <span className="text-xs text-muted-foreground">
+                  {selectedTheme.colors.text}
+                </span>
+              )}
             </div>
             <div className="flex flex-col items-center gap-2">
               <div
@@ -373,9 +264,20 @@ export default function ThemeShowcase() {
                 style={{ backgroundColor: selectedTheme.colors.accent }}
               ></div>
               <span className="text-xs font-medium">Accent</span>
-              <span className="text-xs text-muted-foreground">
-                {selectedTheme.colors.accent}
-              </span>
+              {isEditingCustomPalette ? (
+                <Input
+                  type="color"
+                  value={selectedTheme.colors.accent}
+                  onChange={(e) =>
+                    handleCustomColorChange("accent", e.target.value)
+                  }
+                  className="w-16 h-8 p-1"
+                />
+              ) : (
+                <span className="text-xs text-muted-foreground">
+                  {selectedTheme.colors.accent}
+                </span>
+              )}
             </div>
             <div className="flex flex-col items-center gap-2">
               <div
@@ -383,9 +285,20 @@ export default function ThemeShowcase() {
                 style={{ backgroundColor: selectedTheme.colors.secondary }}
               ></div>
               <span className="text-xs font-medium">Secondary</span>
-              <span className="text-xs text-muted-foreground">
-                {selectedTheme.colors.secondary}
-              </span>
+              {isEditingCustomPalette ? (
+                <Input
+                  type="color"
+                  value={selectedTheme.colors.secondary}
+                  onChange={(e) =>
+                    handleCustomColorChange("secondary", e.target.value)
+                  }
+                  className="w-16 h-8 p-1"
+                />
+              ) : (
+                <span className="text-xs text-muted-foreground">
+                  {selectedTheme.colors.secondary}
+                </span>
+              )}
             </div>
           </div>
 
