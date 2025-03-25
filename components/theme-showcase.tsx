@@ -28,9 +28,12 @@ import ThemeCodeExport from "./theme-code-export";
 import CustomPalette from "./custom-palette";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { useAuth } from "@/components/auth-context";
+import { AuthModal } from "@/components/auth-modal";
 
 export default function ThemeShowcase() {
   const { selectedTheme, setSelectedTheme } = useBrandTheme();
+  const { user, savedPalettes, addSavedPalette } = useAuth();
   const [showCustomPalette, setShowCustomPalette] = useState(false);
   const [customPaletteName, setCustomPaletteName] = useState("");
   const [customPaletteColors, setCustomPaletteColors] = useState({
@@ -40,22 +43,7 @@ export default function ThemeShowcase() {
     background: "#FFFFFF",
   });
   const [isEditingCustomPalette, setIsEditingCustomPalette] = useState(false);
-  const [showAuthDialog, setShowAuthDialog] = useState(false);
-  const [isLogin, setIsLogin] = useState(true);
-  const [authEmail, setAuthEmail] = useState("");
-  const [authPassword, setAuthPassword] = useState("");
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [savedPalettes, setSavedPalettes] = useState<
-    Array<{
-      name: string;
-      colors: {
-        accent: string;
-        secondary: string;
-        text: string;
-        background: string;
-      };
-    }>
-  >([]);
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   const handleCustomColorChange = (color: string, value: string) => {
     setCustomPaletteColors((prevColors) => ({
@@ -90,9 +78,9 @@ export default function ThemeShowcase() {
     setSelectedTheme(newPalette);
   };
 
-  const handleSavePalette = () => {
-    if (!isAuthenticated) {
-      setShowAuthDialog(true);
+  const handleSavePalette = async () => {
+    if (!user) {
+      setShowAuthModal(true);
       return;
     }
 
@@ -104,11 +92,12 @@ export default function ThemeShowcase() {
 
     // Check for duplicate color combinations
     const isDuplicate = savedPalettes.some((palette) => {
+      const paletteColors = JSON.parse(palette.colors);
       return (
-        palette.colors.accent === selectedTheme.colors.accent &&
-        palette.colors.secondary === selectedTheme.colors.secondary &&
-        palette.colors.text === selectedTheme.colors.text &&
-        palette.colors.background === selectedTheme.colors.background
+        paletteColors.accent === selectedTheme.colors.accent &&
+        paletteColors.secondary === selectedTheme.colors.secondary &&
+        paletteColors.text === selectedTheme.colors.text &&
+        paletteColors.background === selectedTheme.colors.background
       );
     });
 
@@ -117,18 +106,33 @@ export default function ThemeShowcase() {
       return;
     }
 
-    const newPalette = {
-      name: selectedTheme.name,
-      colors: selectedTheme.colors,
-    };
+    try {
+      const response = await fetch("/api/palettes", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: selectedTheme.name,
+          colors: JSON.stringify(selectedTheme.colors),
+        }),
+      });
 
-    setSavedPalettes((prev) => [...prev, newPalette]);
+      if (!response.ok) {
+        throw new Error("Failed to save palette");
+      }
+
+      const newPalette = await response.json();
+      addSavedPalette(newPalette);
+    } catch (error) {
+      console.error("Failed to save palette:", error);
+      alert("Failed to save palette. Please try again.");
+    }
   };
 
   const handleAuth = () => {
     // Here you would typically make an API call to authenticate
-    setIsAuthenticated(true);
-    setShowAuthDialog(false);
+    setShowAuthModal(false);
   };
 
   const handleCustomPaletteSelect = () => {
@@ -155,7 +159,7 @@ export default function ThemeShowcase() {
             variant="ghost"
             size="icon"
             onClick={handleSavePalette}
-            className={isAuthenticated ? "text-red-500" : ""}
+            className={user ? "" : "text-red-500"}
           >
             <Heart className="h-5 w-5" />
           </Button>
@@ -521,56 +525,11 @@ export default function ThemeShowcase() {
         open={showCustomPalette}
         onOpenChange={setShowCustomPalette}
       />
-      <Dialog open={showAuthDialog} onOpenChange={setShowAuthDialog}>
-        <DialogContent className="sm:max-w-[425px] bg-white dark:bg-white">
-          <DialogHeader>
-            <DialogTitle className="text-black dark:text-black">
-              {isLogin ? "Login" : "Sign Up"}
-            </DialogTitle>
-            <DialogDescription className="text-black dark:text-black">
-              {isLogin
-                ? "Login to save your palettes"
-                : "Create an account to save your palettes"}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <Label htmlFor="email" className="text-black dark:text-black">
-                Email
-              </Label>
-              <Input
-                id="email"
-                type="email"
-                value={authEmail}
-                onChange={(e) => setAuthEmail(e.target.value)}
-                className="text-black dark:text-black"
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="password" className="text-black dark:text-black">
-                Password
-              </Label>
-              <Input
-                id="password"
-                type="password"
-                value={authPassword}
-                onChange={(e) => setAuthPassword(e.target.value)}
-                className="text-black dark:text-black"
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setIsLogin(!isLogin)}
-              className="text-black dark:text-black"
-            >
-              {isLogin ? "Create Account" : "Already have an account?"}
-            </Button>
-            <Button onClick={handleAuth}>Continue</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <AuthModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        defaultTab="signin"
+      />
     </div>
   );
 }

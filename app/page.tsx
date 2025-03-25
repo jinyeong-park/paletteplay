@@ -27,6 +27,11 @@ import PricingCard from "@/components/pricing-card";
 import { ThemeProvider } from "@/components/theme-provider";
 import { BrandThemeProvider } from "@/components/theme-context";
 import ThemeWrapper from "@/components/theme-wrapper";
+import {
+  AuthButtons,
+  HeroAuthButton,
+  CTAButton,
+} from "@/components/auth-buttons";
 
 export default function Home() {
   return (
@@ -67,14 +72,7 @@ export default function Home() {
                   </Link>
                 </nav>
                 <div className="flex items-center gap-4">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="hidden md:flex"
-                  >
-                    Log in
-                  </Button>
-                  <Button size="sm">Get Started</Button>
+                  <AuthButtons />
                 </div>
               </div>
             </header>
@@ -91,9 +89,7 @@ export default function Home() {
                     inspired by the world's most iconic tech brands.
                   </p>
                   <div className="flex flex-wrap items-center justify-center gap-4">
-                    <Button size="lg" className="gap-2">
-                      Get Started <ArrowRight className="h-4 w-4" />
-                    </Button>
+                    <HeroAuthButton />
                     <Button size="lg" variant="outline">
                       View Demos
                     </Button>
@@ -1109,13 +1105,7 @@ export default function Home() {
                         of AI-driven design.
                       </p>
                     </div>
-                    <Button
-                      size="lg"
-                      variant="secondary"
-                      className="w-full md:w-auto"
-                    >
-                      Get Started
-                    </Button>
+                    <CTAButton />
                   </div>
                 </div>
               </section>
