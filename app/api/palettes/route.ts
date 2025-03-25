@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import prisma from "@/lib/prisma";
+import { getUserPalettes, createPalette } from "@/lib/google-sheets";
 
 export async function POST(req: Request) {
   try {
@@ -17,11 +17,7 @@ export async function POST(req: Request) {
     const { name, colors } = body;
 
     // Check if user has reached the limit of 2 palettes
-    const userPalettes = await prisma.palette.findMany({
-      where: {
-        userId: session.user.id,
-      },
-    });
+    const userPalettes = await getUserPalettes(session.user.id);
 
     if (userPalettes.length >= 2) {
       return NextResponse.json(
@@ -33,12 +29,10 @@ export async function POST(req: Request) {
       );
     }
 
-    const palette = await prisma.palette.create({
-      data: {
-        name,
-        colors,
-        userId: session.user.id,
-      },
+    const palette = await createPalette({
+      name,
+      colors,
+      userId: session.user.id,
     });
 
     return NextResponse.json(palette);
@@ -61,14 +55,7 @@ export async function GET(req: Request) {
       );
     }
 
-    const palettes = await prisma.palette.findMany({
-      where: {
-        userId: session.user.id,
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
+    const palettes = await getUserPalettes(session.user.id);
 
     return NextResponse.json(palettes);
   } catch (error) {
