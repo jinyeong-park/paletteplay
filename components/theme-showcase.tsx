@@ -1,8 +1,17 @@
 "use client";
 
-import { Check, ChevronDown, Palette } from "lucide-react";
+import { Check, ChevronDown, Palette, Plus, Heart } from "lucide-react";
+import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,9 +25,82 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useBrandTheme, themes } from "./theme-context";
 import ThemeCodeExport from "./theme-code-export";
+import CustomPalette from "./custom-palette";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
 export default function ThemeShowcase() {
   const { selectedTheme, setSelectedTheme } = useBrandTheme();
+  const [showCustomPalette, setShowCustomPalette] = useState(false);
+  const [customPaletteName, setCustomPaletteName] = useState("");
+  const [customPaletteColors, setCustomPaletteColors] = useState({
+    accent: "#000000",
+    secondary: "#000000",
+    text: "#000000",
+    background: "#FFFFFF",
+  });
+  const [showAuthDialog, setShowAuthDialog] = useState(false);
+  const [isLogin, setIsLogin] = useState(true);
+  const [authEmail, setAuthEmail] = useState("");
+  const [authPassword, setAuthPassword] = useState("");
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [savedPalettes, setSavedPalettes] = useState<
+    Array<{
+      name: string;
+      colors: {
+        accent: string;
+        secondary: string;
+        text: string;
+        background: string;
+      };
+    }>
+  >([]);
+
+  const handleCustomColorChange = (color: string, value: string) => {
+    setCustomPaletteColors((prevColors) => ({
+      ...prevColors,
+      [color]: value,
+    }));
+  };
+
+  const handleSaveCustomPalette = () => {
+    if (!customPaletteName) return;
+
+    const newPalette = {
+      name: customPaletteName,
+      colors: customPaletteColors,
+    };
+
+    setCustomPaletteName("");
+    setCustomPaletteColors({
+      accent: "#000000",
+      secondary: "#000000",
+      text: "#000000",
+      background: "#FFFFFF",
+    });
+
+    setSelectedTheme(newPalette);
+  };
+
+  const handleSavePalette = () => {
+    if (!isAuthenticated) {
+      setShowAuthDialog(true);
+      return;
+    }
+
+    const newPalette = {
+      name: selectedTheme.name,
+      colors: selectedTheme.colors,
+    };
+
+    setSavedPalettes((prev) => [...prev, newPalette]);
+  };
+
+  const handleAuth = () => {
+    // Here you would typically make an API call to authenticate
+    setIsAuthenticated(true);
+    setShowAuthDialog(false);
+  };
 
   return (
     <div className="space-y-6">
@@ -30,6 +112,14 @@ export default function ThemeShowcase() {
           </span>
         </h3>
         <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleSavePalette}
+            className={isAuthenticated ? "text-red-500" : ""}
+          >
+            <Heart className="h-5 w-5" />
+          </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="gap-2">
@@ -69,6 +159,139 @@ export default function ThemeShowcase() {
                     </div>
                   </DropdownMenuItem>
                 ))}
+                <DropdownMenuSeparator />
+                <div className="p-2 space-y-4">
+                  <div className="space-y-2">
+                    <Label
+                      htmlFor="name"
+                      className="text-black dark:text-black"
+                    >
+                      Palette Name
+                    </Label>
+                    <Input
+                      id="name"
+                      value={customPaletteName}
+                      onChange={(e) => setCustomPaletteName(e.target.value)}
+                      placeholder="Enter palette name"
+                      className="text-black dark:text-black"
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="space-y-2">
+                      <Label
+                        htmlFor="accent"
+                        className="text-black dark:text-black"
+                      >
+                        Accent
+                      </Label>
+                      <div className="flex gap-2">
+                        <Input
+                          id="accent"
+                          type="color"
+                          value={customPaletteColors.accent}
+                          onChange={(e) =>
+                            handleCustomColorChange("accent", e.target.value)
+                          }
+                          className="w-8 h-8 p-1"
+                        />
+                        <Input
+                          value={customPaletteColors.accent}
+                          onChange={(e) =>
+                            handleCustomColorChange("accent", e.target.value)
+                          }
+                          className="text-black dark:text-black"
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label
+                        htmlFor="secondary"
+                        className="text-black dark:text-black"
+                      >
+                        Secondary
+                      </Label>
+                      <div className="flex gap-2">
+                        <Input
+                          id="secondary"
+                          type="color"
+                          value={customPaletteColors.secondary}
+                          onChange={(e) =>
+                            handleCustomColorChange("secondary", e.target.value)
+                          }
+                          className="w-8 h-8 p-1"
+                        />
+                        <Input
+                          value={customPaletteColors.secondary}
+                          onChange={(e) =>
+                            handleCustomColorChange("secondary", e.target.value)
+                          }
+                          className="text-black dark:text-black"
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label
+                        htmlFor="text"
+                        className="text-black dark:text-black"
+                      >
+                        Text
+                      </Label>
+                      <div className="flex gap-2">
+                        <Input
+                          id="text"
+                          type="color"
+                          value={customPaletteColors.text}
+                          onChange={(e) =>
+                            handleCustomColorChange("text", e.target.value)
+                          }
+                          className="w-8 h-8 p-1"
+                        />
+                        <Input
+                          value={customPaletteColors.text}
+                          onChange={(e) =>
+                            handleCustomColorChange("text", e.target.value)
+                          }
+                          className="text-black dark:text-black"
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label
+                        htmlFor="background"
+                        className="text-black dark:text-black"
+                      >
+                        Background
+                      </Label>
+                      <div className="flex gap-2">
+                        <Input
+                          id="background"
+                          type="color"
+                          value={customPaletteColors.background}
+                          onChange={(e) =>
+                            handleCustomColorChange(
+                              "background",
+                              e.target.value
+                            )
+                          }
+                          className="w-8 h-8 p-1"
+                        />
+                        <Input
+                          value={customPaletteColors.background}
+                          onChange={(e) =>
+                            handleCustomColorChange(
+                              "background",
+                              e.target.value
+                            )
+                          }
+                          className="text-black dark:text-black"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <Button onClick={handleSaveCustomPalette} className="w-full">
+                    Create Palette
+                  </Button>
+                </div>
               </DropdownMenuGroup>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -85,7 +308,43 @@ export default function ThemeShowcase() {
                 Experience the {selectedTheme.name} design aesthetic
               </p>
             </div>
-            <Button size="sm">Try Now</Button>
+          </div>
+
+          {/* Saved Palettes Section */}
+          <div className="space-y-4">
+            <h4 className="text-lg font-semibold">Saved Palettes</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {savedPalettes.map((palette) => (
+                <div
+                  key={palette.name}
+                  className="p-4 rounded-lg border cursor-pointer hover:border-accent transition-colors"
+                  onClick={() => setSelectedTheme(palette)}
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="font-medium">{palette.name}</span>
+                    <Heart className="h-4 w-4 text-red-500" />
+                  </div>
+                  <div className="grid grid-cols-4 gap-2">
+                    <div
+                      className="h-8 rounded-full shadow-sm"
+                      style={{ backgroundColor: palette.colors.background }}
+                    ></div>
+                    <div
+                      className="h-8 rounded-full shadow-sm"
+                      style={{ backgroundColor: palette.colors.text }}
+                    ></div>
+                    <div
+                      className="h-8 rounded-full shadow-sm"
+                      style={{ backgroundColor: palette.colors.accent }}
+                    ></div>
+                    <div
+                      className="h-8 rounded-full shadow-sm"
+                      style={{ backgroundColor: palette.colors.secondary }}
+                    ></div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
 
           {/* Color Swatches - Adjusted positioning */}
@@ -284,6 +543,60 @@ export default function ThemeShowcase() {
           </div>
         </div>
       </div>
+      <CustomPalette
+        open={showCustomPalette}
+        onOpenChange={setShowCustomPalette}
+      />
+      <Dialog open={showAuthDialog} onOpenChange={setShowAuthDialog}>
+        <DialogContent className="sm:max-w-[425px] bg-white dark:bg-white">
+          <DialogHeader>
+            <DialogTitle className="text-black dark:text-black">
+              {isLogin ? "Login" : "Sign Up"}
+            </DialogTitle>
+            <DialogDescription className="text-black dark:text-black">
+              {isLogin
+                ? "Login to save your palettes"
+                : "Create an account to save your palettes"}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="email" className="text-black dark:text-black">
+                Email
+              </Label>
+              <Input
+                id="email"
+                type="email"
+                value={authEmail}
+                onChange={(e) => setAuthEmail(e.target.value)}
+                className="text-black dark:text-black"
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="password" className="text-black dark:text-black">
+                Password
+              </Label>
+              <Input
+                id="password"
+                type="password"
+                value={authPassword}
+                onChange={(e) => setAuthPassword(e.target.value)}
+                className="text-black dark:text-black"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setIsLogin(!isLogin)}
+              className="text-black dark:text-black"
+            >
+              {isLogin ? "Create Account" : "Already have an account?"}
+            </Button>
+            <Button onClick={handleAuth}>Continue</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

@@ -174,61 +174,24 @@ function App() {
 }`;
 
   // Generate CSS-in-JS code
-  const cssInJSCode = `// Styled Components
-import styled from 'styled-components';
-
-// Define theme
-const theme = {
-  background: '#FFFFFF',
-  text: '${theme.colors.text}',
-  accent: '${theme.colors.accent}',
-  secondary: '${theme.colors.secondary}',
-};
-
-// Create a ThemeProvider
-import { ThemeProvider } from 'styled-components';
-
-function App() {
-  return (
-    <ThemeProvider theme={theme}>
-      {/* Your app components */}
-    </ThemeProvider>
-  );
-}
-
-// Use in components
-const Button = styled.button\`
-  background-color: \${props => props.theme.accent};
-  color: white;
-  padding: 10px 15px;
-  border: none;
-  border-radius: 4px;
-\`;
-
-// Emotion works similarly
-import { css, Global } from '@emotion/react';
-
-const globalStyles = css\`
-  :root {
-    --theme-background: #FFFFFF;
-    --theme-text: ${theme.colors.text};
-    --theme-accent: ${theme.colors.accent};
-    --theme-secondary: ${theme.colors.secondary};
+  const cssInJSCode = `const theme = {
+  colors: {
+    primary: "${theme.colors.accent}",
+    secondary: "${theme.colors.secondary}",
+    text: "${theme.colors.text}",
+    background: "#FFFFFF"
   }
-  
-  body {
-    background-color: var(--theme-background);
-    color: var(--theme-text);
-  }
-\`;
+};`;
 
-function App() {
-  return (
-    <>
-      <Global styles={globalStyles} />
-      {/* Your app components */}
-    </>
-  );
+  const customPaletteCode = `{
+  "name": "${theme.name}",
+  "colors": {
+    "accent": "${theme.colors.accent}",
+    "secondary": "${theme.colors.secondary}",
+    "text": "${theme.colors.text}",
+    "background": "#FFFFFF"
+  },
+  "description": "Custom color palette generated from ${theme.name} theme"
 }`;
 
   return (
@@ -250,8 +213,8 @@ function App() {
           </DialogDescription>
         </DialogHeader>
 
-        <Tabs defaultValue="css" className="mt-4">
-          <TabsList className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 bg-white dark:bg-white">
+        <Tabs defaultValue="css" className="w-full">
+          <TabsList className="grid w-full grid-cols-7 bg-white dark:bg-white">
             <TabsTrigger value="css" className="text-black dark:text-black">
               CSS
             </TabsTrigger>
@@ -276,17 +239,11 @@ function App() {
             >
               Foundation
             </TabsTrigger>
-            <TabsTrigger
-              value="material-ui"
-              className="text-black dark:text-black"
-            >
-              Material UI
+            <TabsTrigger value="mui" className="text-black dark:text-black">
+              MUI
             </TabsTrigger>
-            <TabsTrigger
-              value="css-in-js"
-              className="text-black dark:text-black"
-            >
-              CSS-in-JS
+            <TabsTrigger value="custom" className="text-black dark:text-black">
+              Custom
             </TabsTrigger>
           </TabsList>
 
@@ -381,38 +338,38 @@ function App() {
               </Button>
             </TabsContent>
 
-            <TabsContent value="material-ui" className="relative">
-              <pre className="overflow-x-auto p-4 text-sm bg-white dark:bg-white">
-                <code className="text-black dark:text-black">
-                  {materialUICode}
-                </code>
-              </pre>
-              <Button
-                variant="outline"
-                size="icon"
-                className="absolute right-2 top-2 bg-white hover:bg-slate-100"
-                onClick={() => copyToClipboard(materialUICode, "material-ui")}
-              >
-                <Copy className="h-4 w-4" />
-                <span className="sr-only">Copy</span>
-              </Button>
+            <TabsContent value="mui" className="mt-4">
+              <div className="relative">
+                <pre className="p-4 rounded-lg bg-white text-black overflow-x-auto">
+                  <code>{materialUICode}</code>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="absolute top-2 right-2 bg-white hover:bg-slate-100"
+                    onClick={() =>
+                      copyToClipboard(materialUICode, "material-ui")
+                    }
+                  >
+                    <Copy className="h-4 w-4" />
+                  </Button>
+                </pre>
+              </div>
             </TabsContent>
 
-            <TabsContent value="css-in-js" className="relative">
-              <pre className="overflow-x-auto p-4 text-sm bg-white dark:bg-white">
-                <code className="text-black dark:text-black">
-                  {cssInJSCode}
-                </code>
-              </pre>
-              <Button
-                variant="outline"
-                size="icon"
-                className="absolute right-2 top-2 bg-white hover:bg-slate-100"
-                onClick={() => copyToClipboard(cssInJSCode, "css-in-js")}
-              >
-                <Copy className="h-4 w-4" />
-                <span className="sr-only">Copy</span>
-              </Button>
+            <TabsContent value="custom" className="mt-4">
+              <div className="relative">
+                <pre className="p-4 rounded-lg bg-white text-black overflow-x-auto">
+                  <code>{customPaletteCode}</code>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="absolute top-2 right-2 bg-white hover:bg-slate-100"
+                    onClick={() => copyToClipboard(customPaletteCode, "custom")}
+                  >
+                    <Copy className="h-4 w-4" />
+                  </Button>
+                </pre>
+              </div>
             </TabsContent>
           </div>
 

@@ -1,18 +1,18 @@
-"use client"
+"use client";
 
-import { createContext, useContext, useState, type ReactNode } from "react"
+import { createContext, useContext, useState, type ReactNode } from "react";
 
 export type ThemeColors = {
-  background: string
-  text: string
-  accent: string
-  secondary: string
-}
+  background: string;
+  text: string;
+  accent: string;
+  secondary: string;
+};
 
 export type BrandTheme = {
-  name: string
-  colors: ThemeColors
-}
+  name: string;
+  colors: ThemeColors;
+};
 
 export const themes: BrandTheme[] = [
   {
@@ -45,10 +45,10 @@ export const themes: BrandTheme[] = [
   {
     name: "Docker",
     colors: {
-      background: "#2496ED",
-      text: "#FFFFFF",
-      accent: "#1D94C9",
-      secondary: "#394D54",
+      background: "#FFFFFF",
+      text: "#394D54",
+      accent: "#2496ED",
+      secondary: "#1D94C9",
     },
   },
   {
@@ -150,27 +150,32 @@ export const themes: BrandTheme[] = [
       secondary: "#3498DB",
     },
   },
-]
+];
 
 type BrandThemeContextType = {
-  selectedTheme: BrandTheme
-  setSelectedTheme: (theme: BrandTheme) => void
-}
+  selectedTheme: BrandTheme;
+  setSelectedTheme: (theme: BrandTheme) => void;
+};
 
-const BrandThemeContext = createContext<BrandThemeContextType | undefined>(undefined)
+const BrandThemeContext = createContext<BrandThemeContextType | undefined>(
+  undefined
+);
 
 export function BrandThemeProvider({ children }: { children: ReactNode }) {
   // Set Dreamy as the default theme (index 0 in the updated themes array)
-  const [selectedTheme, setSelectedTheme] = useState<BrandTheme>(themes[0])
+  const [selectedTheme, setSelectedTheme] = useState<BrandTheme>(themes[0]);
 
-  return <BrandThemeContext.Provider value={{ selectedTheme, setSelectedTheme }}>{children}</BrandThemeContext.Provider>
+  return (
+    <BrandThemeContext.Provider value={{ selectedTheme, setSelectedTheme }}>
+      {children}
+    </BrandThemeContext.Provider>
+  );
 }
 
 export function useBrandTheme() {
-  const context = useContext(BrandThemeContext)
+  const context = useContext(BrandThemeContext);
   if (context === undefined) {
-    throw new Error("useBrandTheme must be used within a BrandThemeProvider")
+    throw new Error("useBrandTheme must be used within a BrandThemeProvider");
   }
-  return context
+  return context;
 }
-
