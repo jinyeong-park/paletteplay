@@ -9,6 +9,10 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
 } from "@/components/ui/dropdown-menu";
 import { useBrandTheme, themes } from "./theme-context";
 import ThemeCodeExport from "./theme-code-export";
@@ -26,7 +30,6 @@ export default function ThemeShowcase() {
           </span>
         </h3>
         <div className="flex items-center gap-2">
-          <ThemeCodeExport theme={selectedTheme} />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="gap-2">
@@ -69,6 +72,7 @@ export default function ThemeShowcase() {
               </DropdownMenuGroup>
             </DropdownMenuContent>
           </DropdownMenu>
+          <ThemeCodeExport theme={selectedTheme} />
         </div>
       </div>
 

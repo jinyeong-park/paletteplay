@@ -2,6 +2,8 @@
 
 PalettePlay is a web application for generating and managing color palettes.
 
+![img](./images/paletteplay_landingpage.png)
+
 ## Features
 
 - 🎨 AI-powered color palette generation
