@@ -1,0 +1,138 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Default theme variables - will be overridden by JavaScript */
+    --theme-background: #ffffff;
+    --theme-text: #4a4a6a;
+    --theme-accent: #b57edc;
+    --theme-accent-rgb: 181, 126, 220;
+    --theme-secondary: #d8bfd8;
+
+    /* shadcn UI variables */
+    --background: var(--theme-background);
+    --foreground: var(--theme-text);
+
+    --card: var(--theme-background);
+    --card-foreground: var(--theme-text);
+
+    --popover: var(--theme-background);
+    --popover-foreground: var(--theme-text);
+
+    --primary: var(--theme-accent);
+    --primary-foreground: #ffffff;
+
+    --secondary: var(--theme-secondary);
+    --secondary-foreground: var(--theme-text);
+
+    --muted: var(--theme-secondary);
+    --muted-foreground: color-mix(in srgb, var(--theme-text) 70%, transparent);
+
+    --accent: color-mix(in srgb, var(--theme-accent) 20%, transparent);
+    --accent-foreground: var(--theme-text);
+
+    --destructive: #ff0000;
+    --destructive-foreground: #ffffff;
+
+    --border: var(--theme-secondary);
+    --input: var(--theme-secondary);
+    --ring: var(--theme-accent);
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-white text-foreground;
+    transition: color 0.3s ease;
+  }
+}
+
+/* Theme-specific classes */
+.theme-container {
+  background-color: white;
+  color: var(--theme-text);
+  transition: color 0.3s ease;
+}
+
+.theme-accent {
+  color: var(--theme-accent);
+  transition: color 0.3s ease;
+}
+
+.theme-accent-bg {
+  background-color: var(--theme-accent);
+  transition: background-color 0.3s ease;
+}
+
+.theme-secondary-bg {
+  background-color: var(--theme-secondary);
+  transition: background-color 0.3s ease;
+}
+
+.theme-secondary {
+  background-color: var(--theme-secondary);
+  opacity: 0.1;
+  transition: background-color 0.3s ease;
+}
+
+/* Button overrides */
+.theme-container button {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+.theme-border {
+  border-color: var(--theme-accent);
+  transition: border-color 0.3s ease;
+}
+
+.theme-shadow {
+  box-shadow: 0 4px 14px rgba(var(--theme-accent-rgb), 0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+/* Component transitions */
+.card,
+.button,
+.input,
+.dropdown-menu,
+.tabs {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
